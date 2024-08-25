@@ -42,8 +42,7 @@ def retrieve_journey(journey_request: JourneyRequest) -> JourneyDetails:
 
     print("Not cached in database, retrieving from API")
     journey_details = retrieve_from_api(
-        station_list=station_list,
-        departure_date_time=departure_date_time,
+        journey_request=journey_request,
     )
 
     store_journey(journey=journey_details)

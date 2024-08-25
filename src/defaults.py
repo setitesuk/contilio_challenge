@@ -3,3 +3,7 @@ List of default values
 """
 
 MAX_WAIT_TIME = 60  # minutes
+REQUEST_OFFSET = "PT01:01:00"
+MAX_REQUEST_OFFSET = "PT12:00:00"
+NUMBER_OF_DEPARTURES_TO_RETURN = 1
+TRAIN_STATUS = "passenger"

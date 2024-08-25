@@ -1,6 +1,7 @@
 """
 test file to test the module src.data_model.get_train_information
 """
+
 import os
 from datetime import datetime
 from src.data_model.get_train_information import retrieve_journey
@@ -63,20 +64,21 @@ JOURNEY_TWO = JourneyDetails(
 JOURNEY_REQUEST_ONE = JourneyRequest(
     departure_date_time=datetime(2022, 2, 9, 14, 17),
     max_wait_time=60,
-    station_identifiers=["LBG", "SAJ", "NWX", "BXY"]
+    station_identifiers=["LBG", "SAJ", "NWX", "BXY"],
 )
 
 JOURNEY_REQUEST_TWO = JourneyRequest(
     departure_date_time=datetime(2022, 2, 9, 14, 17),
     max_wait_time=60,
-    station_identifiers=["LBG", "SAJ", "NWX", "SAJ"]
+    station_identifiers=["LBG", "SAJ", "NWX", "SAJ"],
 )
 
 JOURNEY_REQUEST_THREE = JourneyRequest(
     departure_date_time=datetime(2022, 2, 9, 14, 17),
     max_wait_time=60,
-    station_identifiers=["LBG", "SAJ", "NWX", "SAJ", "LBG"]
+    station_identifiers=["LBG", "SAJ", "NWX", "SAJ", "LBG"],
 )
+
 
 class TestSourceFromDatabase:
     def setup_method(self, method):
@@ -94,6 +96,7 @@ class TestSourceFromDatabase:
     def test_retrieve_journey_sourced_db(self):
         assert retrieve_journey(JOURNEY_REQUEST_ONE) == JOURNEY_ONE
         assert retrieve_journey(JOURNEY_REQUEST_TWO) == JOURNEY_TWO
+
 
 class TestSourceFromAPI:
     def setup_method(self, method):
