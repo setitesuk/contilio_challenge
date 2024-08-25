@@ -69,8 +69,8 @@ class TestTrainJourneysDB:
             pass
         initialise_database()
 
-    # def teardown_method(self, method):
-    #     os.remove("trains.db")
+    def teardown_method(self, method):
+        os.remove("trains.db")
 
     def test_store_journey(self):
         """

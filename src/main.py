@@ -16,11 +16,7 @@ if module_path not in sys.path:
     sys.path.append(module_path)
 
 from src.data_model.dataclasses import JourneyDetails, JourneyRequest
-from src.data_model.db.trains import (
-    store_journey,
-    retrieve_journey,
-    initialise_database,
-)
+from src.data_model.get_train_information import retrieve_journey
 from src import defaults
 
 
@@ -56,7 +52,6 @@ def get_datetime_from_string(datetime_str: str) -> datetime:
         print("datetime is not in a recognised format")
         raise
     return dt_object
-
 
 
 def date_time_as_a_string(
@@ -97,10 +92,7 @@ def main(journey_request: JourneyRequest) -> None:
     primary function to run the code
     """
     print(journey_request)
-    journey_details = retrieve_journey(
-        station_list=journey_request.station_identifiers,
-        departure_date_time=journey_request.departure_date_time,
-    )
+    journey_details = retrieve_journey(journey_request=journey_request)
     print(journey_details)
     stdout_output_result(
         journey_request=journey_request,

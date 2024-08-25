@@ -128,6 +128,10 @@ def initialise_database() -> None:
     Initialise the database
     """
     with Session() as session:
+        try:
+            session.get_bind().dispose()
+        except Exception:
+            pass
         Base.metadata.create_all(session.get_bind())
 
 

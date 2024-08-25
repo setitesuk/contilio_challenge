@@ -72,7 +72,12 @@ class TestGetDateTimeFromString:
         with pytest.raises(Exception) as err:
             get_datetime_from_string("9-10-2022")
 
+
 class TestDateTimeAsAString:
     def test_date_time_as_a_string(self):
-        assert date_time_as_a_string(datetime(2022, 2, 9, 14, 17)) == "2022-02-09 14:17:00"
-        assert date_time_as_a_string(datetime(2022, 2, 9, 14, 49)) == "2022-02-09 14:49:00"
+        assert (
+            date_time_as_a_string(datetime(2022, 2, 9, 14, 17)) == "2022-02-09 14:17:00"
+        )
+        assert (
+            date_time_as_a_string(datetime(2022, 2, 9, 14, 49)) == "2022-02-09 14:49:00"
+        )
