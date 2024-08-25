@@ -2,7 +2,8 @@
 This file describes the tables in the trains database, and issues a session
 """
 
-from typing import Any
+from datetime import datetime
+from typing import Any, Union
 from sqlalchemy import (
     Table,
     UniqueConstraint,
@@ -12,8 +13,11 @@ from sqlalchemy import (
     String,
     ForeignKey,
     Index,
+    DateTime,
 )
 from sqlalchemy.orm import sessionmaker, declarative_base, relationship
+
+from src.data_model.dataclasses import JourneyDetails
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///./trains.db"
 engine = create_engine(
@@ -35,6 +39,11 @@ JOURNEYS = Table(
         "journey_id",
         Integer,
         primary_key=True,
+    ),
+    Column(
+        "departure_date_time",
+        DateTime(timezone=True),
+        nullable=False,
     ),
     Column(
         "joined_journey_list",
@@ -122,49 +131,28 @@ def initialise_database() -> None:
         Base.metadata.create_all(session.get_bind())
 
 
-def store_journey(journey: dict[str, Any]) -> None:
+def store_journey(journey: JourneyDetails) -> None:
     """
     Store a journey
 
     Args:
-        journey (dict[str, Any]): The description of the journey as follows
-
-        {
-            "time_in_mins": 32,
-            "train_stations_with_wait": [
-                {
-                    "station_id": "LBG",
-                    "wait_time": 0,
-                },
-                {
-                    "station_id": "SAJ",
-                    "wait_time": 10,
-                },
-                {
-                    "station_id": "NWX",
-                    "wait_time": 5,
-                },
-                {
-                    "station_id": "BXY",
-                    "wait_time": None,
-                },
-            ]
-        }
+        journey (JourneyDetails): The description of the journey as follows
 
     """
     db_session = Session()
     joined_journey_list = "_".join(
-        [x["station_id"] for x in journey.get("train_stations_with_wait")]
+        [x["station_id"] for x in journey.train_stations_with_wait]
     )
     journey_row = Journeys(
+        departure_date_time=journey.departure_date_time,
         joined_journey_list=joined_journey_list,
-        total_journey_time_mins=journey.get("time_in_mins"),
+        total_journey_time_mins=journey.time_in_mins,
     )
     db_session.add(journey_row)
     db_session.flush()
     journey_id = journey_row.journey_id
 
-    for idx, station in enumerate(journey.get("train_stations_with_wait", [])):
+    for idx, station in enumerate(journey.train_stations_with_wait):
         journey_station_row = JourneyStations(
             journey_id=journey_id,
             station_order=idx,
@@ -175,35 +163,15 @@ def store_journey(journey: dict[str, Any]) -> None:
     db_session.commit()
 
 
-def retrieve_journey(station_list: list[str]) -> dict[str, Any]:
+def retrieve_journey(station_list: list[str], departure_date_time: datetime) -> JourneyDetails:
     """
     retrieve a journey from the database based on the station list provided.
 
     Args:
         station_list (list[str]): a list of the station identifiers in the order that the stations should be visited
-
+        departure_date_time (datetime): the departure date and time 
     Returns:
-        {
-            "time_in_mins": 32,
-            "train_stations_with_wait": [
-                {
-                    "station_id": "LBG",
-                    "wait_time": 0,
-                },
-                {
-                    "station_id": "SAJ",
-                    "wait_time": 10,
-                },
-                {
-                    "station_id": "NWX",
-                    "wait_time": 5,
-                },
-                {
-                    "station_id": "BXY",
-                    "wait_time": None,
-                },
-            ]
-        }
+        JourneyDetails
 
 
     """
@@ -212,18 +180,26 @@ def retrieve_journey(station_list: list[str]) -> dict[str, Any]:
         db_session.query(Journeys, JourneyStations)
         .join(JourneyStations, JourneyStations.journey_id == Journeys.journey_id)
         .filter(Journeys.joined_journey_list == "_".join(station_list))
+        .filter(Journeys.departure_date_time == departure_date_time)
         .order_by(JourneyStations.station_order)
     )
 
     journey_details: dict[str, Any] = {"train_stations_with_wait": []}
 
+    time_in_mins: Union[int, None] = None
+    train_stations_with_wait = []
     for row in query.all():
-        if not journey_details.get("time_in_mins"):
-            journey_details["time_in_mins"] = row[0].total_journey_time_mins
-        journey_details["train_stations_with_wait"].append(
+        if not time_in_mins:
+            time_in_mins = row[0].total_journey_time_mins
+            departure_date_time = row[0].departure_date_time
+        train_stations_with_wait.append(
             {
                 "station_id": row[1].station_identifier,
                 "wait_time": row[1].wait_time_mins,
             }
         )
-    return journey_details
+    return JourneyDetails(
+        time_in_mins=time_in_mins,
+        departure_date_time=departure_date_time,
+        train_stations_with_wait=train_stations_with_wait,
+    )

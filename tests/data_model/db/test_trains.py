@@ -3,6 +3,8 @@ test file for trains
 """
 
 import os
+from datetime import datetime
+from src.data_model.dataclasses import JourneyDetails
 from src.data_model.db.trains import (
     Journeys,
     JourneyStations,
@@ -12,9 +14,10 @@ from src.data_model.db.trains import (
     store_journey,
 )
 
-JOURNEY_ONE = {
-    "time_in_mins": 32,
-    "train_stations_with_wait": [
+JOURNEY_ONE = JourneyDetails(
+    time_in_mins=32,
+    departure_date_time=datetime(2022, 2, 9, 14, 17),
+    train_stations_with_wait=[
         {
             "station_id": "LBG",
             "wait_time": 0,
@@ -32,11 +35,12 @@ JOURNEY_ONE = {
             "wait_time": None,
         },
     ],
-}
+)
 
-JOURNEY_TWO = {
-    "time_in_mins": 24,
-    "train_stations_with_wait": [
+JOURNEY_TWO = JourneyDetails(
+    time_in_mins=24,
+    departure_date_time=datetime(2022, 2, 9, 14, 17),
+    train_stations_with_wait=[
         {
             "station_id": "LBG",
             "wait_time": 0,
@@ -54,7 +58,7 @@ JOURNEY_TWO = {
             "wait_time": None,
         },
     ],
-}
+)
 
 
 class TestTrainJourneysDB:
@@ -65,8 +69,8 @@ class TestTrainJourneysDB:
             pass
         initialise_database()
 
-    def teardown_method(self, method):
-        os.remove("trains.db")
+    # def teardown_method(self, method):
+    #     os.remove("trains.db")
 
     def test_store_journey(self):
         """
@@ -79,6 +83,7 @@ class TestTrainJourneysDB:
             db_session.query(Journeys, JourneyStations)
             .join(JourneyStations, JourneyStations.journey_id == Journeys.journey_id)
             .filter(Journeys.joined_journey_list == "LBG_SAJ_NWX_BXY")
+            .filter(Journeys.departure_date_time == datetime(2022, 2, 9, 14, 17))
             .order_by(JourneyStations.station_order)
         )
 
@@ -86,6 +91,7 @@ class TestTrainJourneysDB:
 
         for row in query.all():
             assert row[0].total_journey_time_mins == 32
+            assert row[0].departure_date_time == datetime(2022, 2, 9, 14, 17)
             journey_stations[row[1].station_identifier] = row[1]
 
         assert journey_stations["LBG"].wait_time_mins == 0
@@ -108,8 +114,7 @@ class TestTrainJourneysDB:
         store_journey(JOURNEY_TWO)
 
         journey_details = retrieve_journey(
-            [x["station_id"] for x in JOURNEY_TWO["train_stations_with_wait"]]
+            station_list=[x["station_id"] for x in JOURNEY_TWO.train_stations_with_wait],
+            departure_date_time=JOURNEY_TWO.departure_date_time,
         )
-        from pprint import pprint
-
         assert journey_details == JOURNEY_TWO
