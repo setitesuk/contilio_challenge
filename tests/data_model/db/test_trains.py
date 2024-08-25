@@ -1,11 +1,14 @@
 """
 test file for trains
 """
+
+import os
 from src.data_model.db.trains import (
     Journeys,
     JourneyStations,
     initialise_database,
     Session,
+    retrieve_journey,
     store_journey,
 )
 
@@ -28,7 +31,7 @@ JOURNEY_ONE = {
             "station_id": "BXY",
             "wait_time": None,
         },
-    ]
+    ],
 }
 
 JOURNEY_TWO = {
@@ -50,24 +53,34 @@ JOURNEY_TWO = {
             "station_id": "SAJ",
             "wait_time": None,
         },
-    ]
+    ],
 }
 
 
-class TestStoringTrainJourneys:
+class TestTrainJourneysDB:
+    def setup_method(self, method):
+        try:
+            os.remove("trains.db")
+        except Exception:
+            pass
+        initialise_database()
+
+    def teardown_method(self, method):
+        os.remove("trains.db")
+
     def test_store_journey(self):
         """
         test storing a journey
         """
+        # initialise_database()
         store_journey(JOURNEY_ONE)
         db_session = Session()
-        query = db_session.query(
-            Journeys,
-            JourneyStations
-        ).join(
-            JourneyStations,
-            JourneyStations.journey_id == Journeys.journey_id
-        ).order_by(JourneyStations.station_order)
+        query = (
+            db_session.query(Journeys, JourneyStations)
+            .join(JourneyStations, JourneyStations.journey_id == Journeys.journey_id)
+            .filter(Journeys.joined_journey_list == "LBG_SAJ_NWX_BXY")
+            .order_by(JourneyStations.station_order)
+        )
 
         journey_stations = {}
 
@@ -75,14 +88,28 @@ class TestStoringTrainJourneys:
             assert row[0].total_journey_time_mins == 32
             journey_stations[row[1].station_identifier] = row[1]
 
-        assert journey_stations["LBG"].wait_time == 0
+        assert journey_stations["LBG"].wait_time_mins == 0
         assert journey_stations["LBG"].station_order == 0
 
-        assert journey_stations["SAJ"].wait_time == 10
+        assert journey_stations["SAJ"].wait_time_mins == 10
         assert journey_stations["SAJ"].station_order == 1
 
-        assert journey_stations["NWX"].wait_time == 5
+        assert journey_stations["NWX"].wait_time_mins == 5
         assert journey_stations["NWX"].station_order == 2
 
-        assert journey_stations["BXY"].wait_time == None
+        assert journey_stations["BXY"].wait_time_mins == None
         assert journey_stations["BXY"].station_order == 3
+
+    def test_retrieve_journey(self):
+        """
+        test that the journey is retrieved ok
+        """
+        store_journey(JOURNEY_ONE)
+        store_journey(JOURNEY_TWO)
+
+        journey_details = retrieve_journey(
+            [x["station_id"] for x in JOURNEY_TWO["train_stations_with_wait"]]
+        )
+        from pprint import pprint
+
+        assert journey_details == JOURNEY_TWO
