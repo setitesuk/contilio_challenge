@@ -1,11 +1,12 @@
 """
 main file to run the application
 """
+
 import os
 import sys
 import argparse
 from dateutil import parser
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Any
 
 from tomlkit import date
@@ -25,6 +26,7 @@ from src import defaults
 
 # Run code and output time here
 
+
 def is_wait_is_too_long(journey_details: JourneyDetails, max_wait_time: int) -> bool:
     """
     see if the wait at any station is too long for the passenger
@@ -43,16 +45,52 @@ def is_wait_is_too_long(journey_details: JourneyDetails, max_wait_time: int) -> 
             return True
     return False
 
+
 def get_datetime_from_string(datetime_str: str) -> datetime:
     """
     converts a datetime string into a datetime object
     """
     try:
         dt_object = parser.parse(datetime_str)
-    except Exception as err:
+    except Exception:
         print("datetime is not in a recognised format")
         raise
     return dt_object
+
+
+
+def date_time_as_a_string(
+    date_time: datetime,
+) -> str:
+    """
+    Takes a datetime object and returns as a string in the format
+
+    Args:
+        date_time (datetime): a datetime object
+
+    Returns:
+        str: a string in the format "2022:02:09 14:17:00"
+    """
+    return date_time.strftime("%Y-%m-%d %H:%M:%S")
+
+
+def stdout_output_result(
+    journey_request: JourneyRequest,
+    journey_details: JourneyDetails,
+) -> None:
+    """
+    Output to STDOUT the result
+    """
+    if is_wait_is_too_long(
+        journey_details=journey_details, max_wait_time=journey_request.max_wait_time
+    ):
+        print(
+            f"Error: This journey has at least one wait at a station longer than the requested maximum wait time of {journey_request.max_wait_time} minutes."
+        )
+        return
+
+    print(f"Arrival time: {date_time_as_a_string(journey_details.arrival_date_time())}")
+
 
 def main(journey_request: JourneyRequest) -> None:
     """
@@ -64,13 +102,15 @@ def main(journey_request: JourneyRequest) -> None:
         departure_date_time=journey_request.departure_date_time,
     )
     print(journey_details)
+    stdout_output_result(
+        journey_request=journey_request,
+        journey_details=journey_details,
+    )
 
 
 if __name__ == "__main__":
     try:
-        arg_parser = argparse.ArgumentParser(
-            description="How long is my journey?"
-        )
+        arg_parser = argparse.ArgumentParser(description="How long is my journey?")
         arg_parser.add_argument(
             "--departure_date_time",
             dest="departure_date_time",
@@ -92,17 +132,17 @@ if __name__ == "__main__":
         )
         args = arg_parser.parse_args()
 
-        departure_date_time = get_datetime_from_string(args.departure_date_time)
+        request_departure_date_time = get_datetime_from_string(args.departure_date_time)
         max_wait_time = args.max_wait_time
         if max_wait_time is None:
             max_wait_time = defaults.MAX_WAIT_TIME
-        journey_request = JourneyRequest(
-            departure_date_time=departure_date_time,
+        request_journey = JourneyRequest(
+            departure_date_time=request_departure_date_time,
             max_wait_time=max_wait_time,
             station_identifiers=args.station_identifiers,
         )
         print("*************")
         print(args)
-        main(journey_request=journey_request)
+        main(journey_request=request_journey)
     except Exception as err:
         print(err)

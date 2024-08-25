@@ -163,13 +163,15 @@ def store_journey(journey: JourneyDetails) -> None:
     db_session.commit()
 
 
-def retrieve_journey(station_list: list[str], departure_date_time: datetime) -> JourneyDetails:
+def retrieve_journey(
+    station_list: list[str], departure_date_time: datetime
+) -> JourneyDetails:
     """
     retrieve a journey from the database based on the station list provided.
 
     Args:
         station_list (list[str]): a list of the station identifiers in the order that the stations should be visited
-        departure_date_time (datetime): the departure date and time 
+        departure_date_time (datetime): the departure date and time
     Returns:
         JourneyDetails
 

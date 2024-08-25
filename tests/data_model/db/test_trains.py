@@ -114,7 +114,9 @@ class TestTrainJourneysDB:
         store_journey(JOURNEY_TWO)
 
         journey_details = retrieve_journey(
-            station_list=[x["station_id"] for x in JOURNEY_TWO.train_stations_with_wait],
+            station_list=[
+                x["station_id"] for x in JOURNEY_TWO.train_stations_with_wait
+            ],
             departure_date_time=JOURNEY_TWO.departure_date_time,
         )
         assert journey_details == JOURNEY_TWO
