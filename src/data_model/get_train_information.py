@@ -12,7 +12,6 @@ from src.data_model.dataclasses import JourneyDetails, JourneyRequest
 from src.data_model.db.trains import (
     store_journey,
     retrieve_journey as retrieve_from_database,
-    initialise_database,
 )
 from src.data_model.api.transport_api import retrieve_journey as retrieve_from_api
 
@@ -44,7 +43,7 @@ def retrieve_journey(journey_request: JourneyRequest) -> JourneyDetails:
     journey_details = retrieve_from_api(
         journey_request=journey_request,
     )
-
+    # cache the data
     store_journey(journey=journey_details)
 
     return journey_details

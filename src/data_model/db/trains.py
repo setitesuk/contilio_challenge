@@ -16,7 +16,7 @@ from sqlalchemy import (
     DateTime,
 )
 from sqlalchemy.orm import sessionmaker, declarative_base, relationship
-
+from sqlalchemy.exc import OperationalError
 from src.data_model.dataclasses import JourneyDetails
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///./trains.db"
@@ -190,7 +190,12 @@ def retrieve_journey(
         .order_by(JourneyStations.station_order)
     )
 
-    journey_details: dict[str, Any] = {"train_stations_with_wait": []}
+    rows = []
+    try:
+        rows = query.all()
+    except OperationalError:
+        initialise_database()
+
 
     time_in_mins: Union[int, None] = None
     train_stations_with_wait = []

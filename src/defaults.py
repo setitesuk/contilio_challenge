@@ -3,7 +3,7 @@ List of default values
 """
 
 MAX_WAIT_TIME = 60  # minutes
-REQUEST_OFFSET = "PT01:01:00"
-MAX_REQUEST_OFFSET = "PT12:00:00"
-NUMBER_OF_DEPARTURES_TO_RETURN = 1
-TRAIN_STATUS = "passenger"
+JOURNEY_TIME_TYPE = "leave_after"
+SERVICE = "tfl"
+TRAVEL_MODES = "train"
+BASE_URL = "https://transportapi.com/v3/uk/public_journey.json"

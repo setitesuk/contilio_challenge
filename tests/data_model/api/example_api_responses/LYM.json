@@ -1,0 +1,164 @@
+{
+    "request_time": "2023-08-04T15:23:18+01:00",
+    "id": "https://transportapi.com/v3/uk/train/station_actual_journeys/LYM.json?datetime=2023-07-10T08:55:00+01:00",
+    "station_name": "Lympstone Village",
+    "station_code": "LYM",
+    "tiploc_code": "LYMPSTN",
+    "datetime": "2023-07-10T08:55:00+01:00",
+    "member": [
+      {
+        "service": {
+          "id": "https://transportapi.com/v3/uk/train/actual_journeys/202212068745030.json",
+          "origin_name": "Exmouth",
+          "destination_name": "Paignton",
+          "category": "OO",
+          "mode": "train",
+          "rid": "202212068745030",
+          "headcode": "5053",
+          "train_uid": "W45030",
+          "retail_service_identifier": "CH144300",
+          "toc": {
+            "atoc_code": "GW",
+            "name": "Great Western Railway"
+          },
+          "train_status": "P",
+          "cancellation": {
+            "code": 138,
+            "reason": "This train has been cancelled because of an obstruction on the line",
+            "cancelled": true
+          },
+          "running_late": null,
+          "coaches": [
+            {
+              "number": "B1",
+              "class": "Standard"
+            },
+            {
+              "number": "A1",
+              "class": "First"
+            }
+          ]
+        },
+        "stop_type": "IP",
+        "cancelled": false,
+        "platform": "1",
+        "reverse_formation": true,
+        "route_change_delay": 0,
+        "aimed": {
+          "departure": {
+            "date": "2022-12-06",
+            "time": "08:58"
+          },
+          "arrival": {
+            "date": "2022-12-06",
+            "time": "08:56"
+          },
+          "pass": null
+        },
+        "actual": {
+          "departure": {
+            "date": "2022-12-06",
+            "time": "08:57"
+          },
+          "arrival": {
+            "date": "2022-12-06",
+            "time": "08:56"
+          },
+          "pass": null
+        },
+        "expected": {
+          "departure": {
+            "date": "2022-12-06",
+            "time": "08:57"
+          },
+          "arrival": {
+            "date": "2022-12-06",
+            "time": "08:56"
+          },
+          "pass": null
+        }
+      },
+      {
+        "service": {
+          "id": "https://transportapi.com/v3/uk/train/actual_journeys/202212068744240.json",
+          "origin_name": "Exmouth",
+          "destination_name": "Paignton",
+          "category": "OO",
+          "mode": "train",
+          "rid": "202212068744240",
+          "headcode": "4240",
+          "train_uid": "W44240",
+          "retail_service_identifier": "CH144301",
+          "toc": {
+            "atoc_code": "GW",
+            "name": "Great Western Railway"
+          },
+          "train_status": "P",
+          "cancellation": {
+            "code": null,
+            "reason": null,
+            "cancelled": false
+          },
+          "running_late": {
+            "code": 330,
+            "reason": "This train has been delayed by high winds"
+          },
+          "coaches": [
+            {
+              "number": "B1",
+              "class": "Standard"
+            },
+            {
+              "number": "A1",
+              "class": "First"
+            }
+          ]
+        },
+        "stop_type": "LI",
+        "cancelled": false,
+        "platform": "1",
+        "reverse_formation": false,
+        "route_change_delay": 1,
+        "aimed": {
+          "departure": {
+            "date": "2022-12-06",
+            "time": "09:14"
+          },
+          "arrival": {
+            "date": "2022-12-06",
+            "time": "09:14"
+          },
+          "pass": null
+        },
+        "actual": {
+          "departure": {
+            "date": "2022-12-06",
+            "time": "09:20"
+          },
+          "arrival": {
+            "date": "2022-12-06",
+            "time": "09:20"
+          },
+          "pass": null
+        },
+        "expected": {
+          "departure": {
+            "date": "2022-12-06",
+            "time": "09:22"
+          },
+          "arrival": {
+            "date": "2022-12-06",
+            "time": "09:21"
+          },
+          "pass": null
+        }
+      }
+    ],
+    "view": {
+      "id": "https://transportapi.com/v3/uk/train/station_actual_journeys/LYM.json?datetime=2023-07-10T08:55:00+01:00&page=2",
+      "page": 2,
+      "page_size": 50,
+      "previous": "https://transportapi.com/v3/uk/train/station_actual_journeys/LYM.json?datetime=2023-07-10T08:55:00+01:00&page=1",
+      "next": "https://transportapi.com/v3/uk/train/station_actual_journeys/LYM.json?datetime=2023-07-10T08:55:00+01:00&page=3"
+    }
+  }
