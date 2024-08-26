@@ -4,10 +4,10 @@ and retrieve journey details from there
 """
 
 from math import floor
-from dateutil import parser
 from datetime import datetime
 from typing import Any, Union
 import requests
+from dateutil import parser
 from src.data_model.dataclasses import JourneyDetails, JourneyRequest
 from src import defaults
 
@@ -138,6 +138,7 @@ def get_query(url: str, query_params: dict[str, Any]) -> dict[str, Any]:
             "X-App-Key": API_KEY,
             "X-App-Id": API_ID,
         },
+        timeout=10,
     )  # JSON-Request API
     if response.status_code > 200:
         raise Exception("Problem connecting to the Transport API")
@@ -155,7 +156,8 @@ def build_query_params(
     Args:
         origin_station (str): the station id of the departure point
         destination (str): the station id if the destination
-        departures_from (datetime): A datetime that specifies the earliest the train can depart from that location
+        departures_from (datetime): A datetime that specifies the
+            earliest the train can depart from that location
 
     Returns:
         dict : a dictionary of the request parameters
