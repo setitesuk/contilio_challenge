@@ -138,15 +138,9 @@ def get_query(url: str, query_params: dict[str, Any]) -> dict[str, Any]:
             "X-App-Id": API_ID,
         },
     )  # JSON-Request API
+    if response.status_code > 200:
+        raise Exception("Problem connecting to the Transport API")
     return response.json()
-
-
-# def build_url(origin_station: str) -> str:
-#     """
-#     Build the url
-#     """
-#     return f"https://transportapi.com/v3/uk/train/station_timetables/{origin_station}.json",
-#     # return f"https://transportapi.com/v3/uk/train/station_actual_journeys/{origin_station}.json"
 
 
 def build_query_params(

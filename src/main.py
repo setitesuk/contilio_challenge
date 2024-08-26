@@ -91,9 +91,7 @@ def main(journey_request: JourneyRequest) -> None:
     """
     primary function to run the code
     """
-    print(journey_request)
     journey_details = retrieve_journey(journey_request=journey_request)
-    print(journey_details)
     stdout_output_result(
         journey_request=journey_request,
         journey_details=journey_details,
@@ -133,8 +131,6 @@ if __name__ == "__main__":
             max_wait_time=max_wait_time,
             station_identifiers=args.station_identifiers,
         )
-        print("*************")
-        print(args)
         main(journey_request=request_journey)
     except Exception as err:
         print(err)
