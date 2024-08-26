@@ -196,7 +196,6 @@ def retrieve_journey(
     except OperationalError:
         initialise_database()
 
-
     time_in_mins: Union[int, None] = None
     train_stations_with_wait = []
     for row in query.all():

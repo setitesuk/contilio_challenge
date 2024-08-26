@@ -2,6 +2,7 @@
 module to connect to the transport api
 and retrieve journey details from there
 """
+
 from math import floor
 from dateutil import parser
 from datetime import datetime
@@ -60,15 +61,13 @@ def retrieve_journey(journey_request: JourneyRequest) -> JourneyDetails:
     for station_id in journey_request.station_identifiers:
         travel_info = travel_information_responses[station_id].get("response")
         if not travel_info:
-            train_stations_with_wait.append({
-                "station_id": station_id,
-                "wait_time": None
-            })
+            train_stations_with_wait.append(
+                {"station_id": station_id, "wait_time": None}
+            )
             continue
-        train_stations_with_wait.append({
-            "station_id": station_id,
-            "wait_time": travel_info.get("wait_time")
-        })
+        train_stations_with_wait.append(
+            {"station_id": station_id, "wait_time": travel_info.get("wait_time")}
+        )
         time_in_mins += travel_info.get("journey_time", 0)
         time_in_mins += travel_info.get("wait_time", 0)
 
@@ -79,7 +78,9 @@ def retrieve_journey(journey_request: JourneyRequest) -> JourneyDetails:
     )
 
 
-def process_response(earliest_departure_time: datetime, response: dict[str, Any]) -> dict[str, Any]:
+def process_response(
+    earliest_departure_time: datetime, response: dict[str, Any]
+) -> dict[str, Any]:
     """
     process the response to get out the
     wait time (in mins),
@@ -95,7 +96,7 @@ def process_response(earliest_departure_time: datetime, response: dict[str, Any]
             "wait_time": <int>,
             "journey_time": <int>,
             "arrival_time": <datetime>
-        }    
+        }
     """
     response_routes = response.get("routes", [])
     if not response_routes:
@@ -107,12 +108,11 @@ def process_response(earliest_departure_time: datetime, response: dict[str, Any]
         departure_datetime = parser.parse(departure_datetime)
         arrival_datetime = parser.parse(arrival_datetime)
 
-
         wait_time_delta = departure_datetime - earliest_departure_time
         if wait_time_delta.total_seconds() < 0:
             continue
 
-        wait_time_in_whole_mins = floor((wait_time_delta.total_seconds() / 60 ) + 0.5)
+        wait_time_in_whole_mins = floor((wait_time_delta.total_seconds() / 60) + 0.5)
 
         hours, mins, _ = response_route.get("duration").split(":")
         hours = int(hours)
@@ -122,9 +122,10 @@ def process_response(earliest_departure_time: datetime, response: dict[str, Any]
             "wait_time": wait_time_in_whole_mins,
             "journey_time": journey_time,
             "arrival_time": arrival_datetime,
-        }    
+        }
 
     raise Exception("No viable journey found")
+
 
 def get_query(url: str, query_params: dict[str, Any]) -> dict[str, Any]:
     """
